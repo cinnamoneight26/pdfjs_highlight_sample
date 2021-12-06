@@ -2679,6 +2679,7 @@
       }
 
       function webViewerFindFromUrlHash(evt) {
+        console.log(evt.phraseSearch)
         PDFViewerApplication.findController.executeCommand("find", {
           query: evt.query,
           phraseSearch: evt.phraseSearch,
@@ -5138,6 +5139,7 @@
           });
           this.highlightAll.addEventListener("click", () => {
             this.dispatchEvent("highlightallchange");
+            console.log("?????")
           });
           this.caseSensitive.addEventListener("click", () => {
             this.dispatchEvent("casesensitivitychange");
@@ -5163,13 +5165,11 @@
             keyword = TESTKEYWORD;
           };
 
-          console.log(keyword);
-
           this.eventBus.dispatch("find", {
             source: this,
             type,
-            query: keyword,
-            // query: this.findField.value,
+            // query: keyword,
+            query: this.findField.value,
             phraseSearch: true,
             caseSensitive: this.caseSensitive.checked,
             entireWord: this.entireWord.checked,
