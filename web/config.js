@@ -17,7 +17,7 @@ let TESTKEYWORD_3 = "일반윁으로 씁상의 품질을 평가하기 위해 PSN
 var TESTKEYWORDARRAY = [TESTKEYWORD_1, TESTKEYWORD_2, TESTKEYWORD_3];
 
 // --- 선택된 하이라이트 컬러
-let SELECTHIGHLIGHTCOLOR = '#f00';
+let SELECTHIGHLIGHTCOLOR = '#c00';
 
 
 // --- pdf 파일

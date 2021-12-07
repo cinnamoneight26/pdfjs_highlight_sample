@@ -59,8 +59,8 @@
 }
 
 .textLayer .highlight.selected {
-  background-color: rgba(0, 100, 0, 0);
-  /* background-color: rgba(0, 100, 0, 1); */
+  /* background-color: rgba(0, 100, 0, 0); */
+  background-color: rgba(0, 100, 0, 1);
 }
 
 .textLayer ::-moz-selection {

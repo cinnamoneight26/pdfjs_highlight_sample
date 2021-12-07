@@ -21,7 +21,10 @@
   <script src="../build/pdf.js"></script>
   <script src="./spectrum.js"></script>
   <script src="./viewer.js"></script>
-  <script type="module" src='./highlight.js'></script>
+  <script src="./TextHighlighter.js"></script>
+
+  <!-- <script type="module" src='./highlight.js'></script> -->
+  <script type="module" src='./highlight2.js'></script>
 
   <style>
     div.hiDiv {
@@ -221,17 +224,18 @@
           <div id="toolbarViewer">
             <div id="toolbarViewerLeft">
               <!-- 하이라이트 색상 변경 버튼 -->
-              <div id ="selectcolor" style="width: 20px; height: 20px; background-color: #f00; margin: 6px 10px; cursor: pointer;"></div>
+              <div id="selectcolor"
+                style="width: 20px; height: 20px; background-color: #c00; margin: 6px 10px; cursor: pointer;"></div>
               <!-- 전체 삭제 -->
-              <div id ="clearHl" style="width: 20px; height: 20px; margin: 6px 10px; cursor: pointer;"> &#128683; </div>
+              <div id="clearHl" style="width: 20px; height: 20px; margin: 6px 10px; cursor: pointer;"> &#128683; </div>
 
               <button id="sidebarToggle" class="toolbarButton hidden" title="Toggle Sidebar" tabindex="11"
                 data-l10n-id="toggle_sidebar" aria-expanded="false" aria-controls="sidebarContainer">
                 <span data-l10n-id="toggle_sidebar_label">Toggle Sidebar</span>
               </button>
               <div class="toolbarButtonSpacer hidden"></div>
-              <button id="viewFind" class="toolbarButton hidden" title="Find in Document" tabindex="12" data-l10n-id="findbar"
-                aria-expanded="false" aria-controls="findbar">
+              <button id="viewFind" class="toolbarButton hidden" title="Find in Document" tabindex="12"
+                data-l10n-id="findbar" aria-expanded="false" aria-controls="findbar">
                 <span data-l10n-id="findbar_label">Find</span>
               </button>
               <div class="splitToolbarButton hiddenSmallView hidden">
@@ -244,8 +248,8 @@
                   <span data-l10n-id="next_label">Next</span>
                 </button>
               </div>
-              <input type="number" id="pageNumber" class="toolbarField pageNumber hidden" title="Page" value="1" size="4"
-                min="1" tabindex="15" data-l10n-id="page" autocomplete="off">
+              <input type="number" id="pageNumber" class="toolbarField pageNumber hidden" title="Page" value="1"
+                size="4" min="1" tabindex="15" data-l10n-id="page" autocomplete="off">
               <span id="numPages" class="toolbarLabel hidden"></span>
             </div>
             <div id="toolbarViewerRight" class="hidden">
