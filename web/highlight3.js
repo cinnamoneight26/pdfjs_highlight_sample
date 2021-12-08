@@ -4,16 +4,20 @@ window.onload = function () {
     // TEXT HIGHTLIGHT
     var hltr = new TextHighlighter(document.body), serialized;
 
-    // 삭제 시 text내용도 지워줘야 함
     // 단일 지우기
     $(document).on('click', '.highlighted', function (e) {
-        var item = $(this).attr('class').replace('highlighted ', '');
-        var target = $('.' + item);
+        var item = $(this).attr('class').replace('highlighted ','');
+        console.log('item : ', item)
+        var target = $('.'+item);
         var length = target.length;
+        console.log('length : ', length)
         for (var i = 0; i < length; i++) {
+            console.log(target[i])
             hltr.removeHighlights(target[i]);
         }
-        console.log('[Remove Target highlight]');
+        console.log('[remove target highlight]');
+        // console.log(e.target)
+        // hltr.removeHighlights(e.target);
     });
 
     // 전체 지우기
@@ -21,7 +25,7 @@ window.onload = function () {
         serialized = hltr.serializeHighlights();
         // console.log(serialized)
         hltr.removeHighlights();
-        console.log('[Remove All highlight]')
+        console.log('[remove highlight]')
     });
 
     $("#outerContainer").LoadingOverlay("show", loading_overlay_default);
@@ -131,85 +135,67 @@ window.onload = function () {
                 _uuid = makeUUID();
             }
             // $('#findHighlightAll').click();
-            await middleSpanWork();
-
-            setTimeout(function() {
-                // 역직렬화
-                hltr.deserializeHighlights(serialized);
-            }, 500);
+            await findSearchResultSelectionHighlight();
 
         } catch (error) {
-            return 'fail...';
+            return 'fail...T_T';
         }
-    };
-
-    async function middleSpanWork() {
-        setTimeout(function() {
-            if ( !$('span.selected').hasClass('middle') && !$('span.selected').hasClass('end')) {
-                console.log("middle 없음");
-                return;
-            } else {
-                // middle 클래스 길이
-                var middleSpanLength = $('span.middle').length;
-        
-                console.log('middleSpanLength :', middleSpanLength);
-        
-                for (var i = 0; i < middleSpanLength; i++) {
-                    var _html = '';
-                    // middle 클래스 텍스트
-                    var _text = $('span.middle')[i].innerText;
-                    // 텍스트 뽑아내서 html 새로 생성
-                    _html += '<span class="highlight selected">' + _text + '</span>';
-                    // 생성한 html을 자식요소로 append
-                    // $('span.middle')[i].innerHTML = _html;
-                    document.getElementsByClassName('middle')[i].innerHTML = _html;
-                }
-        
-                // console.log( $('span.middle')[i] )
-                // 부모의 class는 모두 지워준다
-                $('span.middle.highlight.selected').removeClass('highlight middle selected');
-
-                findSearchResultSelectionHighlight();
-            }
-        }, 500)
     };
 
     async function findSearchResultSelectionHighlight() {
         setTimeout(function () {
-            // 검색 결과 개수 구하기
+            // // 검색 결과 개수 구하기
             var searchResultLengt = $('.highlight').length;
-
-            console.log('searchResultLengt :', searchResultLengt);
-
+            
             if (searchResultLengt == 0) {
                 findSearchResultSelectionHighlight();
                 return;
             };
 
-            // // 검색 결과 위치값 저장 - 배열에 오브젝트 형태로.
+            // span 정리 - 두개로 나뉘어진 span을 찾아서 정리
+            if ($('.highlight').hasClass('selected')) {
+                $('.highlight').removeClass('selected');
+            }
+            // begin, end 클래스가 있는지 찾기
+            var findBeginClass = $('.textLayer .highlight.begin');
+            // 해당 클래스에 있는 text를 일단 저장
+            var getBeginText = findBeginClass.text();
+            // 부모 span에 highlight, appended 클래스 추가
+            findBeginClass.parent().addClass('highlight');
+            // 저장한 텍스트를 부모 span에 저장
+            findBeginClass.parent().text(getBeginText);
 
+            var findEndClass = $('.textLayer .highlight.end');
+            var getEndText = findEndClass.text();
+            findEndClass.parent().addClass('highlight');
+            findEndClass.parent().text(getEndText);
+
+            // 검색 결과 위치값 저장 - 배열에 오브젝트 형태로.
+            console.log("searchResultLengt : ", searchResultLengt)
+
+            
             for (var i = 0; i < searchResultLengt; i++) {
                 // 단어일 때와 문장일 때 정보가 달라져서 분기해야 함 : 단어 안 해도 됨. 대체로 문장으로 사용
-                var _thisText = $('span.highlight')[i].innerHTML;
-                var _thisWidth = $('span.highlight')[i].getBoundingClientRect().width;
-                var _thisHeigt = $('span.highlight')[i].getBoundingClientRect().height;
+                var _thisWidth = $('.highlight')[i].getBoundingClientRect().width;
+                var _thisHeigt = $('.highlight')[i].getBoundingClientRect().height;
+                var _thisLeft = parseInt($('.highlight')[i].style.left);
+                var _thisTop = parseInt($('.highlight')[i].style.top);
+                var _thisText = $('.highlight')[i].innerHTML;
 
                 // 해당 위치에 highlighted 생성
                 var el = document.createElement('span');
                 el.setAttribute('class', 'highlighted '+_uuid)
                 el.setAttribute('style', 'position: absolute; cursor : pointer; background-color: ' + SELECTHIGHLIGHTCOLOR + ';' +
-                    'width:' + _thisWidth + 'px; height:' + _thisHeigt + 'px;' +
-                    'display:table');
+                    'left:' + _thisLeft + 'px; top:' + _thisTop + 'px;' +
+                    'width:' + _thisWidth + 'px; height:' + _thisHeigt + 'px;');
                 el.setAttribute('data-highlighted', 'true');
                 el.setAttribute('data-timestamp', new Date().getTime());
                 el.innerText = _thisText;
-
+                
+                // el.setAttribute('class', _uuid);
+                // el.setAttribute('data-item', _uuid);
                 $('.highlight')[i].parentElement.appendChild(el);
-
             };
-            // 직렬화
-            serialized = hltr.serializeHighlights();
-            console.log(serialized)
             // 기존 검색 결과 표시 삭제
             $('.highlight').removeClass('highlight');
         }, 100);
@@ -218,5 +204,5 @@ window.onload = function () {
     function makeUUID() {
         function s4() { return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1); }
         return s4() + s4() + '_' + s4() + '_' + s4() + '_' + s4() + '_' + s4() + s4() + s4()
-    };
+    }
 };

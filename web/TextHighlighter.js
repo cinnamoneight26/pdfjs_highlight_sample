@@ -421,7 +421,6 @@
      * @class TextHighlighter
      */
     function TextHighlighter(element, options) {
-        console.log(element)
         if (!element) {
             throw 'Missing anchor element';
         }
@@ -954,7 +953,7 @@
         span.style.cursor = "pointer";
         // span.style.backgroundColor = options.color;
         span.className = options.highlightedClass;
-        span.classList.add(this.node_id);
+        span.classList.add(this.node_id)
         return span;
     };
 
