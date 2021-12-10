@@ -15,8 +15,9 @@ let TESTKEYWORD_2 = "CSV 포맷은 약 6cm정도 되는 인간의 좌안과 우�
 let TESTKEYWORD_3 = "일반윁으로 씁상의 품질을 평가하기 위해 PSNR을 주로 사용한다.  이는 신호의 위력에 대한 고려 없이 MSE  (Mean  Squated  Error)를 사용해서 계산 할 수 있기 때문에 매우 간단하는 장윐이 있다.";
 let TESTKEYWORD_4 = "본 논문의 구성은 다음과 같다.";
 // var TESTKEYWORDARRAY = [TESTKEYWORD_1];
-var TESTKEYWORDARRAY = [TESTKEYWORD_1, TESTKEYWORD_2, TESTKEYWORD_3];
-// var TESTKEYWORDARRAY = [TESTKEYWORD_1, TESTKEYWORD_2, TESTKEYWORD_3, TESTKEYWORD_4];
+// var TESTKEYWORDARRAY = [TESTKEYWORD_1, TESTKEYWORD_2];
+// var TESTKEYWORDARRAY = [TESTKEYWORD_1, TESTKEYWORD_2, TESTKEYWORD_3];
+var TESTKEYWORDARRAY = [TESTKEYWORD_1, TESTKEYWORD_2, TESTKEYWORD_3, TESTKEYWORD_4];
 
 // --- 선택된 하이라이트 컬러
 let SELECTHIGHLIGHTCOLOR = '#c00';
@@ -28,5 +29,5 @@ let SELECTHIGHLIGHTCOLOR = '#c00';
 // let PDFFILENAME = "./pdf/ko_test.pdf";
 let PDFFILENAME = "./pdf/artiPreView.pdf";
 
-// selectrion을 위해 mousedown을 한 페이지
-let SELECTEDPAGE = null;
+// // selectrion을 위해 mousedown을 한 페이지
+// let SELECTEDPAGE = null;

@@ -2,7 +2,12 @@ window.onload = function () {
     var _uuid;
 
     // TEXT HIGHTLIGHT
-    var hltr = new TextHighlighter(document.body), serialized;
+    var hltr = new TextHighlighter(document.body, {
+        onAfterHighlight: function (range, hlts) {
+            serialized = hltr.serializeHighlights();
+            saveLocalstorage(serialized);
+        }
+    }), serialized;
 
     // 삭제 시 text내용도 지워줘야 함
     // 단일 지우기
@@ -13,7 +18,19 @@ window.onload = function () {
         for (var i = 0; i < length; i++) {
             hltr.removeHighlights(target[i]);
         }
-        console.log('[Remove Target highlight]');
+        serialized = hltr.serializeHighlights();
+        saveLocalstorage(serialized);
+
+        // 스토리지에서 value 체크
+        var _data = localStorage.getItem("test");
+        
+        if (_data) {
+            if (_data == '[]') {
+                localStorage.removeItem("test");
+            }
+        }
+
+        // console.log('[Remove Target highlight]');
     });
 
     // 전체 지우기
@@ -21,7 +38,14 @@ window.onload = function () {
         serialized = hltr.serializeHighlights();
         // console.log(serialized)
         hltr.removeHighlights();
-        console.log('[Remove All highlight]')
+
+        // serialized 초기화
+        serialized = [];
+
+        // localstorage remove
+        localStorage.removeItem("test");
+
+        // console.log('[Remove All highlight]')
     });
 
     $("#outerContainer").LoadingOverlay("show", loading_overlay_default);
@@ -37,8 +61,17 @@ window.onload = function () {
     };
 
     async function main() {
-        return await searchingArray();
-        // await searchingArray();
+        // 스토리지에서 value 체크
+        var _data = localStorage.getItem("test");
+
+        // localstorage가 있으면 해당 자료 보여줌
+        if ( _data == '[]' || _data ==  null) {
+            await searchingArray();
+            console.log("Load Search Array");
+        } else {
+            await localStorageGetItem();
+            console.log("Load Localstorage");
+        }
     }
 
     // 강제로 검색 결과 표시
@@ -70,19 +103,12 @@ window.onload = function () {
         }
     });
 
-    // window.addEventListener('mouseup', function () {
-    //     var length = window.getSelection().toString().length;
-    //     if (length > 0) {
-    //         // console.log(window.PDFViewerApplication)
-    //         showHighlight();
-    //     } else {
-    //         // Clear All ?!
-    //     }
-    // });
+
     // ----------------------------------------------------------------------------- //
 
     async function searchingArray() {
-        console.log(window.PDFViewerApplication)
+        // console.log(window.PDFViewerApplication)
+
         if (TESTKEYWORDARRAY != "") {
             // 검색 결과 배열로 처리
             for (let i = 0; i < TESTKEYWORDARRAY.length; i++) {
@@ -99,22 +125,22 @@ window.onload = function () {
     };
 
     // 마우스 다운 했을 때 페이지 저장
-    $(document).on('mousedown', '.page', function () {
-        SELECTEDPAGE = $(this).attr('data-page-number');
+    // $(document).on('mousedown', '.page', function () {
+    //     SELECTEDPAGE = $(this).attr('data-page-number');
+    // });
+
+    $(document).on('mousewheel', 'body', function () {
+        hltr.deserializeHighlights(serialized);
     });
 
     // 검색 입력 이벤트
     async function searchKeyword(keyword) {
-        console.log("searchKeyword event");
-        // TESTKEYWORD = keyword;
         await bindEvent(keyword);
     };
 
 
     async function bindEvent(keyword) {
-        console.log("bindEvent event");
-        // console.log( window.PDFViewerApplication.findBar)
-
+        // console.log("bindEvent event");
         try {
             if (typeof window.PDFViewerApplication.findController !== 'undefined') {
                 window.PDFViewerApplication.findBar.open();
@@ -131,10 +157,11 @@ window.onload = function () {
                 _uuid = makeUUID();
             }
             // $('#findHighlightAll').click();
-            await middleSpanWork();
+            await makeHighlightSpan();
 
             setTimeout(function() {
                 // 역직렬화
+                // console.log(serialized)
                 hltr.deserializeHighlights(serialized);
             }, 500);
 
@@ -143,16 +170,28 @@ window.onload = function () {
         }
     };
 
-    async function middleSpanWork() {
+    async function makeHighlightSpan() {
         setTimeout(function() {
             if ( !$('span.selected').hasClass('middle') && !$('span.selected').hasClass('end')) {
                 console.log("middle 없음");
                 return;
             } else {
+                // begin, end 클래스 정리
+                _uuid = makeUUID();
+                var begin_html = '';
+                var findBeginClass = $('.textLayer .highlight.begin');
+                var getBeginText = findBeginClass.text();
+                begin_html += '<span class="highlight selected '+_uuid+'">' + getBeginText + '</span>';
+                $('.textLayer .highlight.begin').parent().html(begin_html);
+                var end_html = '';
+                var findEndClass = $('.textLayer .highlight.end');
+                var getEndText = findEndClass.text();
+                end_html += '<span class="highlight selected '+_uuid+'">' + getEndText + '</span>';
+                $('.textLayer .highlight.end').parent().html(end_html);
+
                 // middle 클래스 길이
                 var middleSpanLength = $('span.middle').length;
-        
-                console.log('middleSpanLength :', middleSpanLength);
+                // console.log('middleSpanLength :', middleSpanLength);
         
                 for (var i = 0; i < middleSpanLength; i++) {
                     var _html = '';
@@ -171,7 +210,7 @@ window.onload = function () {
 
                 findSearchResultSelectionHighlight();
             }
-        }, 500)
+        }, 1000)
     };
 
     async function findSearchResultSelectionHighlight() {
@@ -179,7 +218,7 @@ window.onload = function () {
             // 검색 결과 개수 구하기
             var searchResultLengt = $('.highlight').length;
 
-            console.log('searchResultLengt :', searchResultLengt);
+            // console.log('searchResultLengt :', searchResultLengt);
 
             if (searchResultLengt == 0) {
                 findSearchResultSelectionHighlight();
@@ -187,7 +226,6 @@ window.onload = function () {
             };
 
             // // 검색 결과 위치값 저장 - 배열에 오브젝트 형태로.
-
             for (var i = 0; i < searchResultLengt; i++) {
                 // 단어일 때와 문장일 때 정보가 달라져서 분기해야 함 : 단어 안 해도 됨. 대체로 문장으로 사용
                 var _thisText = $('span.highlight')[i].innerHTML;
@@ -199,24 +237,45 @@ window.onload = function () {
                 el.setAttribute('class', 'highlighted '+_uuid)
                 el.setAttribute('style', 'position: absolute; cursor : pointer; background-color: ' + SELECTHIGHLIGHTCOLOR + ';' +
                     'width:' + _thisWidth + 'px; height:' + _thisHeigt + 'px;' +
-                    'display:table');
+                    'display:table;');
                 el.setAttribute('data-highlighted', 'true');
                 el.setAttribute('data-timestamp', new Date().getTime());
                 el.innerText = _thisText;
 
                 $('.highlight')[i].parentElement.appendChild(el);
 
+                // console.log(el)
             };
+
             // 직렬화
             serialized = hltr.serializeHighlights();
-            console.log(serialized)
+            // console.log(serialized)
+
             // 기존 검색 결과 표시 삭제
-            $('.highlight').removeClass('highlight');
-        }, 100);
+            // $('.highlight').removeClass('highlight');
+            $('.highlight').remove();
+        }, 200);
     };
 
     function makeUUID() {
         function s4() { return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1); }
         return s4() + s4() + '_' + s4() + '_' + s4() + '_' + s4() + '_' + s4() + s4() + s4()
+    };
+
+    function saveLocalstorage(serialized) {
+        var _data = serialized;
+        var key = "test";
+        // console.log("--- setLocalstorage  ---")
+        localStorage.setItem(key, _data);
+    };
+
+    async function localStorageGetItem() {
+        var _data = localStorage.getItem("test");
+        serialized = _data;
+
+        setTimeout(function() {
+            hltr.deserializeHighlights(serialized);
+            $("#outerContainer").LoadingOverlay("hide", true);
+        }, 1000)
     };
 };

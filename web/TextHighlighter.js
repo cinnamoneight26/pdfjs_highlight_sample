@@ -851,7 +851,7 @@
                     path: hlDescriptor[2].split(':'),
                     offset: hlDescriptor[3],
                     length: hlDescriptor[4]
-                },
+            },
                 elIndex = hl.path.pop(),
                 node = self.el,
                 hlNode,
@@ -861,7 +861,8 @@
             while (!!(idx = hl.path.shift())) {
                 node = node.childNodes[idx];
             }
-
+            
+            // console.log(node)
             if (node.childNodes[elIndex-1] && node.childNodes[elIndex-1].nodeType === NODE_TYPE.TEXT_NODE) {
                 elIndex -= 1;
             }
@@ -885,9 +886,10 @@
         hlDescriptors.forEach(function (hlDescriptor) {
             try {
                 deserializationFn(hlDescriptor);
+
             } catch (e) {
                 if (console && console.warn) {
-                    console.warn("Can't deserialize highlight descriptor. Cause: " + e);
+                    // console.warn("Can't deserialize highlight descriptor. Cause: " + e);
                 }
             }
         });
