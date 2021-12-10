@@ -22,11 +22,11 @@ window.onload = function () {
         saveLocalstorage(serialized);
 
         // 스토리지에서 value 체크
-        var _data = localStorage.getItem("test");
+        var _data = localStorage.getItem(PDFFILENAME);
         
         if (_data) {
             if (_data == '[]') {
-                localStorage.removeItem("test");
+                localStorage.removeItem(PDFFILENAME);
             }
         }
 
@@ -43,7 +43,7 @@ window.onload = function () {
         serialized = [];
 
         // localstorage remove
-        localStorage.removeItem("test");
+        localStorage.removeItem(PDFFILENAME);
 
         // console.log('[Remove All highlight]')
     });
@@ -62,7 +62,7 @@ window.onload = function () {
 
     async function main() {
         // 스토리지에서 value 체크
-        var _data = localStorage.getItem("test");
+        var _data = localStorage.getItem(PDFFILENAME);
 
         // localstorage가 있으면 해당 자료 보여줌
         if ( _data == '[]' || _data ==  null) {
@@ -76,7 +76,11 @@ window.onload = function () {
 
     // 강제로 검색 결과 표시
     setTimeout(function () {
-        main();
+        try {
+            main();
+        } catch (error) {
+            console.warn("진행할 수 없습니다. error: ", error);
+        }
     }, 1000);
 
     // colorpicker
@@ -264,18 +268,22 @@ window.onload = function () {
 
     function saveLocalstorage(serialized) {
         var _data = serialized;
-        var key = "test";
+        var key = PDFFILENAME;
         // console.log("--- setLocalstorage  ---")
         localStorage.setItem(key, _data);
     };
 
     async function localStorageGetItem() {
-        var _data = localStorage.getItem("test");
+        var _data = localStorage.getItem(PDFFILENAME);
         serialized = _data;
 
         setTimeout(function() {
-            hltr.deserializeHighlights(serialized);
-            $("#outerContainer").LoadingOverlay("hide", true);
+            try {
+                hltr.deserializeHighlights(serialized);
+                $("#outerContainer").LoadingOverlay("hide", true);
+            } catch (error) {
+                console.warn("로드할 수 없습니다. error : ", error);
+            }
         }, 1000)
     };
 };
