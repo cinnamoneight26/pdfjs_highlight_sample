@@ -17,4 +17,4 @@ pdfjs_highlight_sample
 ---
 2021.12.10 - TextHighlighter 라이브러리 추가. 
 미리 들어오는 검색 문자열을 찾아 체크한 후 직렬화하여 localstorage에 저장한 후 역직렬하여 render.
-사용자가 하이라이트를 생성/삭제할 때마다 localstorage에 저장하여 해당 pdf를 불러오면 마지막 작업 상태 그대로 불러올 
+사용자가 하이라이트를 생성/삭제할 때마다 localstorage에 저장하여 해당 pdf를 불러오면 마지막 작업 상태 그대로 불러올 수 있음
